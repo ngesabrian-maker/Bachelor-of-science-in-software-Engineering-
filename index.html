@@ -1,0 +1,703 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>NGESA NOTES · Software Engineering Notes</title>
+    <!-- Font Awesome 5 for icons (free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ---------- GLOBAL RESET & VARIABLES ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        :root {
+            --bg-dark: #0b0f1c;
+            --bg-card: #141b2b;
+            --bg-card-hover: #1e2639;
+            --primary: #3b82f6;
+            --primary-glow: #2563eb;
+            --accent: #8b5cf6;
+            --text-main: #f0f4ff;
+            --text-muted: #9aa4bf;
+            --border-light: rgba(255, 255, 255, 0.06);
+            --shadow-sm: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 1rem;
+        }
+
+        /* subtle background glow */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.12), transparent 60%),
+                        radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.1), transparent 60%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* ---------- REUSABLE CONTAINER ---------- */
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 1.5rem 1rem 2.5rem;
+        }
+
+        /* ---------- HEADER / HERO ---------- */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 2rem 1rem 1.5rem;
+            width: 100%;
+        }
+
+        .logo-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 0.5rem 1.25rem;
+            border-radius: 100px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(4px);
+            color: var(--primary);
+        }
+
+        .logo-badge i {
+            font-size: 1rem;
+        }
+
+        h1 {
+            font-size: clamp(2.2rem, 8vw, 4rem);
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #a5c9ff 80%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .subhead {
+            font-size: clamp(1rem, 4vw, 1.35rem);
+            color: var(--text-muted);
+            max-width: 680px;
+            margin: 0 auto 1.5rem;
+            padding: 0 0.5rem;
+        }
+
+        .badge-ongoing {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            color: #ffc107;
+            border-radius: 100px;
+            padding: 0.4rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+        }
+
+        .badge-ongoing i {
+            font-size: 0.75rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; transform: scale(1.1); }
+            100% { opacity: 0.7; }
+        }
+
+        /* ---------- PLATFORM TAGS ---------- */
+        .platforms {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .platform-tag {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            padding: 0.5rem 1.25rem;
+            border-radius: 100px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #ccd6f0;
+            transition: all 0.2s;
+        }
+
+        .platform-tag i {
+            color: var(--primary);
+        }
+
+        .platform-tag:hover {
+            border-color: var(--primary);
+            background: var(--bg-card-hover);
+        }
+
+        /* ---------- IDE MOCKUP / APP PREVIEW ---------- */
+        .app-preview {
+            margin: 2.5rem 0 2rem;
+            width: 100%;
+        }
+
+        .ide-window {
+            background: #0e121f;
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: var(--shadow-sm), 0 0 0 1px rgba(59, 130, 246, 0.1);
+            overflow: hidden;
+            max-width: 900px;
+            margin: 0 auto;
+            transition: transform 0.3s ease;
+        }
+
+        .ide-window:hover {
+            transform: scale(1.005);
+            box-shadow: 0 25px 35px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(59, 130, 246, 0.2);
+        }
+
+        .window-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.8rem 1.2rem;
+            background: #0a0e17;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .window-dots {
+            display: flex;
+            gap: 0.6rem;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot.red { background: #ff5f56; }
+        .dot.yellow { background: #ffbd2e; }
+        .dot.green { background: #27c93f; }
+
+        .window-title {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .window-title i {
+            color: var(--primary);
+        }
+
+        .window-actions {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .editor-body {
+            display: flex;
+            min-height: 260px;
+            background: #0b0f1c;
+        }
+
+        .sidebar {
+            width: 100px;
+            background: #0a0e17;
+            padding: 1rem 0.5rem;
+            border-right: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .sidebar-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            transition: 0.2s;
+        }
+
+        .sidebar-icon.active {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--primary);
+            border-left: 3px solid var(--primary);
+        }
+
+        .sidebar-icon:hover {
+            background: rgba(255, 255, 255, 0.03);
+            color: #cbd5e1;
+        }
+
+        .code-area {
+            flex: 1;
+            padding: 1.5rem 1.8rem;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            line-height: 1.7;
+            overflow-x: auto;
+        }
+
+        .code-line {
+            display: flex;
+            gap: 1.2rem;
+            white-space: pre;
+        }
+
+        .line-num {
+            color: #2d3a5e;
+            user-select: none;
+            width: 2rem;
+            text-align: right;
+        }
+
+        .code-comment { color: #5f7a9c; }
+        .code-keyword { color: #f472b6; }
+        .code-var { color: #7dd3fc; }
+        .code-string { color: #a5d6a5; }
+        .code-func { color: #c084fc; }
+
+        /* ---------- FEATURES GRID ---------- */
+        .features {
+            margin: 3.5rem 0 2rem;
+            width: 100%;
+        }
+
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.01em;
+        }
+
+        .section-sub {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-size: 0.95rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            padding: 1.75rem 1.5rem;
+            transition: all 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(59, 130, 246, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.6);
+        }
+
+        .card-icon {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 1.2rem;
+            background: rgba(59, 130, 246, 0.1);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+        }
+
+        .card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.6rem;
+            font-weight: 600;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* ---------- FOOTER ---------- */
+        .footer {
+            width: 100%;
+            margin-top: 3rem;
+            padding: 1.8rem 1rem 1rem;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .footer-brand i {
+            color: var(--primary);
+        }
+
+        .footer .highlight {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .footer .highlight:hover {
+            text-decoration: underline;
+        }
+
+        /* ---------- RESPONSIVE FINE-TUNING ---------- */
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem 0.75rem 2rem;
+            }
+
+            .hero {
+                padding: 1.5rem 0.5rem 1rem;
+            }
+
+            .sidebar {
+                width: 60px;
+                padding: 0.8rem 0.3rem;
+            }
+
+            .sidebar-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+
+            .code-area {
+                padding: 1rem 1rem;
+                font-size: 0.75rem;
+            }
+
+            .line-num {
+                width: 1.5rem;
+            }
+
+            .window-header {
+                padding: 0.6rem 1rem;
+            }
+
+            .window-actions {
+                gap: 0.6rem;
+                font-size: 0.8rem;
+            }
+
+            .grid {
+                gap: 1rem;
+            }
+
+            .card {
+                padding: 1.5rem 1.2rem;
+            }
+
+            .platforms {
+                gap: 0.5rem;
+            }
+
+            .platform-tag {
+                padding: 0.4rem 1rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .sidebar {
+                display: none;
+            }
+
+            .code-area {
+                padding: 0.8rem;
+            }
+
+            .window-title span {
+                display: none;
+            }
+        }
+
+        /* smooth interactive elements */
+        button, a, .platform-tag {
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* custom scroll for code area */
+        .code-area::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .code-area::-webkit-scrollbar-track {
+            background: #0a0e17;
+        }
+
+        .code-area::-webkit-scrollbar-thumb {
+            background: #2d3a5e;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- HERO SECTION -->
+        <header class="hero">
+            <div class="logo-badge">
+                <i class="fas fa-code"></i>
+                <span>FhETCH.online</span>
+            </div>
+
+            <div class="badge-ongoing">
+                <i class="fas fa-sync-alt"></i>
+                <span>Development in progress</span>
+            </div>
+
+            <h1>NGESA NOTES</h1>
+            <p class="subhead">
+                A Bachelor of Science in Software Engineering notes hub with an integrated IDE — 
+                built for Windows and Android. Continuously improved.
+            </p>
+
+            <div class="platforms">
+                <div class="platform-tag">
+                    <i class="fab fa-windows"></i> Windows
+                </div>
+                <div class="platform-tag">
+                    <i class="fab fa-android"></i> Android
+                </div>
+                <div class="platform-tag">
+                    <i class="fas fa-laptop-code"></i> IDE included
+                </div>
+            </div>
+        </header>
+
+        <!-- APP PREVIEW / IDE MOCKUP -->
+        <section class="app-preview">
+            <div class="ide-window">
+                <div class="window-header">
+                    <div class="window-dots">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                    </div>
+                    <div class="window-title">
+                        <i class="fas fa-file-code"></i>
+                        <span>ngesa_notes / software_engineering_notes.md</span>
+                    </div>
+                    <div class="window-actions">
+                        <i class="fas fa-play"></i>
+                        <i class="fas fa-save"></i>
+                        <i class="fas fa-cog"></i>
+                    </div>
+                </div>
+                <div class="editor-body">
+                    <div class="sidebar">
+                        <div class="sidebar-icon active"><i class="fas fa-folder-open"></i></div>
+                        <div class="sidebar-icon"><i class="fas fa-search"></i></div>
+                        <div class="sidebar-icon"><i class="fas fa-code-branch"></i></div>
+                        <div class="sidebar-icon"><i class="fas fa-puzzle-piece"></i></div>
+                        <div class="sidebar-icon"><i class="fas fa-terminal"></i></div>
+                    </div>
+                    <div class="code-area">
+                        <div class="code-line">
+                            <span class="line-num">1</span>
+                            <span><span class="code-comment"># NGESA NOTES — Software Engineering BSc</span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-num">2</span>
+                            <span><span class="code-keyword">class</span> <span class="code-var">SoftwareEngineeringNotes</span> {</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-num">3</span>
+                            <span>  <span class="code-func">constructor</span>() {</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-num">4</span>
+                            <span>    <span class="code-keyword">this</span>.platforms = [<span class="code-string">'Windows'</span>, <span class="code-string">'Android'</span>];</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-num">5</span>
+                            <span>    <span class="code-keyword">this</span>.ideIntegrated = <span class="code-keyword">true</span>;</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-num">6</span>
+                            <span>    <span class="code-keyword">this</span>.status = <span class="code-string">'🚧 improving'</span>;</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-num">7</span>
+                            <span>  }</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-num">8</span>
+                            <span>  <span class="code-func">study</span>() { <span class="code-keyword">return</span> <span class="code-string">'📘 BSc notes + IDE'</span>; }</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-num">9</span>
+                            <span>}</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-num">10</span>
+                            <span><span class="code-comment">// managed by FhETCH.online</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FEATURES / HIGHLIGHTS -->
+        <section class="features">
+            <h2 class="section-title">Built for software engineering students</h2>
+            <p class="section-sub">
+                NGESA NOTES combines structured BSc notes with a lightweight IDE — 
+                currently in active development for Windows & Android.
+            </p>
+
+            <div class="grid">
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <h3>BSc Software Eng. Notes</h3>
+                    <p>Curated notes covering algorithms, data structures, system design, and more — tailored for the bachelor's programme.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-laptop-code"></i></div>
+                    <h3>Integrated IDE</h3>
+                    <p>Write, test and run code snippets directly inside the app. No need to switch between tools while studying.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-mobile-alt"></i></div>
+                    <h3>Windows & Android</h3>
+                    <p>Native experience on both desktop and mobile. Sync your notes and code on the go.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-rocket"></i></div>
+                    <h3>Continuous Improvement</h3>
+                    <p>Active development — new features, performance boosts, and UI refinements are rolled out regularly.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div class="footer-brand">
+                <i class="fas fa-code"></i>
+                <span>NGESA NOTES</span>
+            </div>
+            <p>
+                Managed and developed with <i class="fas fa-heart" style="color: #ef4444; margin: 0 2px;"></i> by 
+                <a href="#" class="highlight" style="text-decoration: none;">FhETCH.online</a>
+            </p>
+            <p style="font-size: 0.75rem; opacity: 0.7;">
+                <i class="fas fa-sync-alt fa-spin" style="margin-right: 6px;"></i> Development still in progress · Windows & Android
+            </p>
+        </footer>
+    </div>
+
+    <!-- tiny script for smooth interaction (optional) -->
+    <script>
+        (function() {
+            // Just a small enhancement: console greeting for devs
+            console.log('🚀 NGESA NOTES — BSc Software Engineering notes + IDE');
+            console.log('📌 managed by FhETCH.online | still improving...');
+
+            // Optional: add a subtle click feedback on platform tags
+            const tags = document.querySelectorAll('.platform-tag');
+            tags.forEach(tag => {
+                tag.addEventListener('click', function(e) {
+                    // purely visual feedback for demonstration
+                    this.style.transform = 'scale(0.96)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 120);
+                });
+            });
+
+            // make the app preview interactive on hover/click (mobile friendly)
+            const ideWindow = document.querySelector('.ide-window');
+            if (ideWindow) {
+                ideWindow.addEventListener('click', function() {
+                    // just a tiny playful response
+                    this.style.transition = 'transform 0.2s';
+                    this.style.transform = 'scale(0.99)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                });
+            }
+        })();
+    </script>
+</body>
+</html>
